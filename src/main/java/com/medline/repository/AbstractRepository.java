@@ -12,6 +12,11 @@ import com.medline.utility.DbUtil;
 public class AbstractRepository {
 	
 	private String pwd;
+	
+	public AbstractRepository() {
+		
+	}
+	
 	public AbstractRepository(String pwd) {
 		this.pwd = pwd;
 	}

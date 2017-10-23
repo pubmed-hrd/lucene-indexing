@@ -17,17 +17,19 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.FSDirectory;
 
-public class SearchingIndex {
+public class SearchingService {
 	private IndexReader reader;
 	private IndexSearcher searcher;
 	private Analyzer analyzer;
 	private QueryParser parser;
 	
-	private String indexPath= "D:\\Lucence";
+	private String indexPath;
 	
-	public SearchingIndex(){}
+	public SearchingService(String indexPath){
+		this.indexPath = indexPath;
+	}
 	
-	public void startSearch(String searchquery){
+	public void search(String searchquery){
 		
 		try {
 			reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));

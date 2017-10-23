@@ -1,6 +1,10 @@
 package com.medline.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -19,13 +23,13 @@ import org.apache.lucene.store.FSDirectory;
 import com.medline.model.Abstract;
 import com.medline.repository.AbstractRepository;
 
-public class Indexing {
+public class IndexingService {
 
 	private Analyzer analyzer;
 	private AbstractRepository repository;
 	private Integer limit = 10_000;
 	
-	public Indexing(AbstractRepository repository) {
+	public IndexingService(AbstractRepository repository) {
 		this.repository = repository;
 	}
 
@@ -82,6 +86,63 @@ public class Indexing {
 			}
 		}
 		System.out.println(String.format("-> Finish indexing in %s seconds.\n", (System.currentTimeMillis() - start) * Math.pow(10, -3)));
+	}
+	
+	public boolean readAndIndex(String folder, String indexPath, boolean isAppend) {
+		try {
+			analyzer = new StandardAnalyzer();
+
+			Directory dir = FSDirectory.open(Paths.get(indexPath));
+			IndexWriterConfig config = new IndexWriterConfig(analyzer);
+
+			if (!isAppend) {
+				config.setOpenMode(OpenMode.CREATE);
+			} else {
+				config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+			}			
+			IndexWriter writer = new IndexWriter(dir, config);
+			
+			//TODO: read from file
+			File files = new File(folder);
+			File[] listOfFiles = files.listFiles();
+
+			for (int i = 0; i < listOfFiles.length; i++) {
+				String filePath = listOfFiles[i].getAbsolutePath();
+				
+				System.out.println(String.format("-> Executing file: %s", listOfFiles[i].getAbsolutePath()));
+				
+				try (BufferedReader b = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
+					String readLine = "";
+					while ((readLine = b.readLine()) != null) {
+						String[] sTexts = readLine.split("\t", 4);
+
+						//System.out.println(String.format("%s\t%s\t%s\t%s", sTexts[0], sTexts[1], sTexts[2], sTexts[3]));
+						
+						String pmid = sTexts[0];
+						String abstractTextOrder = sTexts[1];
+						String sentence = sTexts[2];
+						String sentenceOrder = sTexts[3];
+						
+						//TODO: Indexing 
+						Document doc = new Document();
+						if (sentence != null) {
+							doc.add(new StringField("pmid", pmid, Field.Store.YES));
+							doc.add(new StringField("abstractTextOrder", abstractTextOrder, Field.Store.YES));
+							doc.add(new TextField("sentence", sentence, Field.Store.YES));
+							doc.add(new StringField("sentenceOrder", sentenceOrder, Field.Store.YES));
+							writer.addDocument(doc);
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			writer.close();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public Integer getLimit() {

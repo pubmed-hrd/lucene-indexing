@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -38,8 +39,9 @@ public class SearchingService {
 			reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
 			searcher = new IndexSearcher(reader);
 			analyzer = new StandardAnalyzer();
-			parser = new QueryParser("sentence", analyzer);
-			//parser = new MultiFieldQueryParser(new String[]{"title","date"}, analyzer);
+			//parser = new QueryParser("sentence", analyzer);
+			
+			parser = new MultiFieldQueryParser(new String[]{"sentence"}, analyzer);
 			
 			Query query;
 			try {
@@ -76,7 +78,5 @@ public class SearchingService {
 			e.printStackTrace();
 		}
 		return null;
-		
-		
 	}
 }

@@ -120,16 +120,16 @@ public class IndexingService {
 						
 						String pmid = sTexts[0];
 						String abstractTextOrder = sTexts[1];
-						String sentence = sTexts[2];
-						String sentenceOrder = sTexts[3];
+						String sentenceOrder = sTexts[2];
+						String sentence = sTexts[3];
 						
 						//TODO: Indexing 
 						Document doc = new Document();
 						if (sentence != null) {
 							doc.add(new StringField("pmid", pmid, Field.Store.YES));
 							doc.add(new StringField("abstractTextOrder", abstractTextOrder, Field.Store.YES));
-							doc.add(new TextField("sentence", sentence, Field.Store.YES));
 							doc.add(new StringField("sentenceOrder", sentenceOrder, Field.Store.YES));
+							doc.add(new TextField("sentence", sentence, Field.Store.YES));
 							writer.addDocument(doc);
 						}
 					}

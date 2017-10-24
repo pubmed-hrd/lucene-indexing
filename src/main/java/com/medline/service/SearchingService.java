@@ -38,7 +38,7 @@ public class SearchingService {
 			reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
 			searcher = new IndexSearcher(reader);
 			analyzer = new StandardAnalyzer();
-			parser = new QueryParser("title", analyzer);
+			parser = new QueryParser("sentence", analyzer);
 			//parser = new MultiFieldQueryParser(new String[]{"title","date"}, analyzer);
 			
 			Query query;

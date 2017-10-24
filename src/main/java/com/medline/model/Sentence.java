@@ -39,8 +39,7 @@ public class Sentence {
 	}
 	@Override
 	public String toString() {
-		return "Sentence [sentence=" + sentence + ", pmid=" + pmid + ", sentenceOrder=" + sentenceOrder
-				+ ", abstractTextOrder=" + abstractTextOrder + "]";
+		return String.format("[pmid: %s, sentenceOrder: %s, sentence: %s, abstractTextOrder: %s]", pmid, sentenceOrder, sentence, abstractTextOrder);
 	}
 	
 }
